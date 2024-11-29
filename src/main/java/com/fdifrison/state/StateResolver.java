@@ -11,19 +11,19 @@ public class StateResolver {
 
     public static State resolve(Status status) {
         return switch (status) {
-            case IN_PROGRESS -> new InProgress();
-            case IN_REVIEW -> new InReview();
-            case APPROVED -> new Approved();
-            case REJECTED -> new Rejected();
+            case IN_PROGRESS -> new State.InProgress(Status.IN_PROGRESS);
+            case IN_REVIEW -> new State.InReview(Status.IN_REVIEW);
+            case APPROVED -> new State.Approved(Status.APPROVED);
+            case REJECTED -> new State.Rejected(Status.REJECTED);
         };
     }
 
     public static Status resolve(State state) {
         return switch (state) {
-            case InProgress _ -> Status.IN_PROGRESS;
-            case InReview _ -> Status.IN_REVIEW;
-            case Approved _ -> Status.APPROVED;
-            case Rejected _ -> Status.REJECTED;
+            case State.InProgress _ -> Status.IN_PROGRESS;
+            case State.InReview _ -> Status.IN_REVIEW;
+            case State.Approved _ -> Status.APPROVED;
+            case State.Rejected _ -> Status.REJECTED;
 
         };
     }

@@ -1,13 +1,11 @@
 package com.fdifrison.repository;
 
-import com.fdifrison.dto.Request;
-import com.fdifrison.event.*;
+import com.fdifrison.dto.EventLog;
 
 public class EventLogRepository {
 
-    public void save(Request request, Event event) {
-        System.out.println("Saving event to Auditing table:");
-        System.out.println(event);
+    public void save(EventLog request) {
+        System.out.println("EventLogRepository.save()");
         System.out.println(request);
     }
 

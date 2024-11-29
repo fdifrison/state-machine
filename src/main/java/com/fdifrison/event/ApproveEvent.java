@@ -1,24 +1,37 @@
 package com.fdifrison.event;
 
 import com.fdifrison.dto.Request;
-import com.fdifrison.state.Approved;
-import com.fdifrison.state.InReview;
+import com.fdifrison.service.EventLogService;
+import com.fdifrison.service.JwtService;
 import com.fdifrison.state.State;
+import com.fdifrison.state.StateResolver;
 
-public record ApproveEvent(State from, Approved to) implements AdminEvent {
+public record ApproveEvent(State from, State.Approved to, Request.ApproveRequest request) implements Event.AdminEvent {
 
     public ApproveEvent {
-        if (!(from instanceof InReview)) throw new IllegalStateException("State must be in review");
+        if (!(from instanceof State.InReview))
+            throw new IllegalStateException("State must be " + StateResolver.Status.IN_REVIEW);
     }
 
     @Override
-    public void logEvent() {
-        System.out.println("Approve: from=" + from + " to=" + to);
+    public void logEvent(EventLogService logService) {
+        logService.logEvent(this);
     }
 
     @Override
-    public State handleEvent(Request request) {
-        return null;
+    public void guard(JwtService jwtService) {
+        AdminEvent.super.guard(jwtService);
+    }
+
+    @Override
+    public Request handleEvent() {
+        System.out.println("ApproveEvent.handleEvent()");
+        System.out.println("Find entity by id: " + request.id());
+        System.out.println(request);
+        System.out.println("Updating entity state to " + this.to);
+        var updated = new Request.ApproveRequest(request.id(), request.payload(), StateResolver.resolve(this.to()));
+        System.out.println(updated);
+        return updated;
     }
 
 
