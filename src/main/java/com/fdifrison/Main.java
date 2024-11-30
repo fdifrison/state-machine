@@ -6,8 +6,8 @@ import com.fdifrison.dto.Request;
 import com.fdifrison.repository.EventLogRepository;
 import com.fdifrison.service.EventLogService;
 import com.fdifrison.service.JwtService;
-import com.fdifrison.service.StateMachineService;
-import com.fdifrison.state.StateResolver;
+import com.fdifrison.statemachine.StateMachineService;
+import com.fdifrison.statemachine.state.StateResolver;
 
 import java.util.UUID;
 
@@ -28,7 +28,7 @@ public class Main {
                 new Payload.Document("MyDoc", new byte[1000]),
                 StateResolver.Status.IN_PROGRESS);
 
-        var submitResponse = (Request.SubmitRequest) controller.Submit(submit);
+        var submitResponse = (Request.SubmitRequest) controller.submit(submit);
 
         System.out.println("\n---------------------------------\n");
 
@@ -40,13 +40,13 @@ public class Main {
         Request.ApproveRequest approvedResponse;
 
         try {
-            approvedResponse = (Request.ApproveRequest) controller.Approve(approve);
+            approvedResponse = (Request.ApproveRequest) controller.approve(approve);
         } catch (Exception e) {
             System.out.println("\nEXCEPTION  ----------------------");
             System.out.println(e.getMessage());
             System.out.println("EXCEPTION  ----------------------\n");
             guardService.setUserRole(JwtService.Roles.ADMIN);
-            approvedResponse = (Request.ApproveRequest) controller.Approve(approve);
+            approvedResponse = (Request.ApproveRequest) controller.approve(approve);
         }
 
         System.out.println("\n---------------------------------\n");
@@ -57,7 +57,7 @@ public class Main {
                 new Payload.RejectionCause("C.N", "Rejected because you like python"),
                 StateResolver.Status.IN_REVIEW);
 
-        var rejectResponse = controller.Reject(reject);
+        var rejectResponse = controller.reject(reject);
 
         System.out.println("\n---------------------------------\n");
 

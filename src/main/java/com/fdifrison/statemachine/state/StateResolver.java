@@ -1,4 +1,4 @@
-package com.fdifrison.state;
+package com.fdifrison.statemachine.state;
 
 public class StateResolver {
 

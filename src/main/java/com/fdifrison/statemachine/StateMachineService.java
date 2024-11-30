@@ -1,10 +1,12 @@
-package com.fdifrison.service;
+package com.fdifrison.statemachine;
 
 import com.fdifrison.dto.Request;
-import com.fdifrison.event.ApproveEvent;
-import com.fdifrison.event.Event;
-import com.fdifrison.event.RejectEvent;
-import com.fdifrison.event.SubmitEvent;
+import com.fdifrison.service.EventLogService;
+import com.fdifrison.service.JwtService;
+import com.fdifrison.statemachine.event.ApproveEvent;
+import com.fdifrison.statemachine.event.Event;
+import com.fdifrison.statemachine.event.RejectEvent;
+import com.fdifrison.statemachine.event.SubmitEvent;
 
 public class StateMachineService {
 
@@ -29,6 +31,4 @@ public class StateMachineService {
             };
         };
     }
-
-
 }

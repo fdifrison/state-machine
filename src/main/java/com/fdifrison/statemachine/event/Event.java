@@ -1,10 +1,10 @@
-package com.fdifrison.event;
+package com.fdifrison.statemachine.event;
 
 import com.fdifrison.dto.Request;
 import com.fdifrison.service.EventLogService;
 import com.fdifrison.service.JwtService;
 
-public sealed interface Event permits Event.UserEvent, Event.AdminEvent {
+public sealed interface Event  {
 
     void logEvent(EventLogService logService);
 

@@ -1,15 +1,19 @@
-package com.fdifrison.event;
+package com.fdifrison.statemachine.event;
 
 import com.fdifrison.dto.Request;
 import com.fdifrison.service.EventLogService;
-import com.fdifrison.state.State;
-import com.fdifrison.state.StateResolver;
+import com.fdifrison.statemachine.state.State;
+import com.fdifrison.statemachine.state.StateResolver;
 
 public record RejectEvent(State from, State.Rejected to, Request.RejectRequest request) implements Event.AdminEvent {
 
     public RejectEvent {
         if (!(from instanceof State.InReview))
             throw new IllegalStateException("State must be " + StateResolver.Status.IN_REVIEW);
+    }
+
+    public RejectEvent(State from, Request.RejectRequest request) {
+        this(from, new State.Rejected(StateResolver.Status.REJECTED), request);
     }
 
     @Override

@@ -1,16 +1,20 @@
-package com.fdifrison.event;
+package com.fdifrison.statemachine.event;
 
 import com.fdifrison.dto.Request;
 import com.fdifrison.service.EventLogService;
 import com.fdifrison.service.JwtService;
-import com.fdifrison.state.State;
-import com.fdifrison.state.StateResolver;
+import com.fdifrison.statemachine.state.State;
+import com.fdifrison.statemachine.state.StateResolver;
 
 public record SubmitEvent(State from, State.InReview to, Request.SubmitRequest request) implements Event.UserEvent {
 
     public SubmitEvent {
         if (!(from instanceof State.InProgress))
             throw new IllegalStateException("State must be " + StateResolver.Status.IN_PROGRESS);
+    }
+
+    public SubmitEvent(State from, Request.SubmitRequest request) {
+        this(from, new State.InReview(StateResolver.Status.IN_REVIEW) , request);
     }
 
     @Override

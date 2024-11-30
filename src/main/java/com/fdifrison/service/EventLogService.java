@@ -2,12 +2,12 @@ package com.fdifrison.service;
 
 import com.fdifrison.dto.EventLog;
 import com.fdifrison.dto.Request;
-import com.fdifrison.event.ApproveEvent;
-import com.fdifrison.event.Event;
-import com.fdifrison.event.RejectEvent;
-import com.fdifrison.event.SubmitEvent;
+import com.fdifrison.statemachine.event.ApproveEvent;
+import com.fdifrison.statemachine.event.Event;
+import com.fdifrison.statemachine.event.RejectEvent;
+import com.fdifrison.statemachine.event.SubmitEvent;
 import com.fdifrison.repository.EventLogRepository;
-import com.fdifrison.state.State;
+import com.fdifrison.statemachine.state.State;
 
 public class EventLogService {
 
