@@ -5,8 +5,13 @@ import com.fdifrison.statemachine.StateMachineService;
 import com.fdifrison.statemachine.event.ApproveEvent;
 import com.fdifrison.statemachine.event.RejectEvent;
 import com.fdifrison.statemachine.event.SubmitEvent;
+import com.fdifrison.statemachine.state.State;
 import com.fdifrison.statemachine.state.StateResolver;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
+@RestController
 public class StateController {
 
     private final StateMachineService stateMachineService;
@@ -15,19 +20,19 @@ public class StateController {
         this.stateMachineService = stateMachineService;
     }
 
-    public Request submit(Request.SubmitRequest request) {
-        var requestState = StateResolver.resolve(request.status());
-        return stateMachineService.handleEvent(new SubmitEvent(requestState, request));
+    @PostMapping("submit")
+    public Request submit(@RequestBody Request.SubmitRequest request, State state) {
+        return stateMachineService.handleEvent(new SubmitEvent(state, request));
     }
 
-    public Request reject(Request.RejectRequest request) {
-        var requestState = StateResolver.resolve(request.status());
-        return stateMachineService.handleEvent(new RejectEvent(requestState, request));
+    @PostMapping("reject")
+    public Request reject(@RequestBody Request.RejectRequest request, State state) {
+        return stateMachineService.handleEvent(new RejectEvent(state, request));
     }
 
-    public Request approve(Request.ApproveRequest request) {
-        var requestState = StateResolver.resolve(request.status());
-        return stateMachineService.handleEvent(new ApproveEvent(requestState, request));
+    @PostMapping("approve")
+    public Request approve(@RequestBody Request.ApproveRequest request, State state) {
+        return stateMachineService.handleEvent(new ApproveEvent(state, request));
     }
 
 }

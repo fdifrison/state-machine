@@ -5,6 +5,7 @@ import com.fdifrison.service.EventLogService;
 import com.fdifrison.service.JwtService;
 import com.fdifrison.statemachine.state.State;
 import com.fdifrison.statemachine.state.StateResolver;
+import org.springframework.stereotype.Component;
 
 public record ApproveEvent(State from, State.Approved to, Request.ApproveRequest request) implements Event.AdminEvent {
 
@@ -33,7 +34,7 @@ public record ApproveEvent(State from, State.Approved to, Request.ApproveRequest
         System.out.println("Find entity by id: " + request.id());
         System.out.println(request);
         System.out.println("Updating entity state to " + this.to);
-        var updated = new Request.ApproveRequest(request.id(), request.payload(), StateResolver.resolve(this.to()));
+        var updated = new Request.ApproveRequest(request.id(), request.payload());
         System.out.println(updated);
         return updated;
     }

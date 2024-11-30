@@ -1,67 +1,64 @@
 package com.fdifrison;
 
-import com.fdifrison.controller.StateController;
 import com.fdifrison.dto.Payload;
 import com.fdifrison.dto.Request;
-import com.fdifrison.repository.EventLogRepository;
-import com.fdifrison.service.EventLogService;
 import com.fdifrison.service.JwtService;
 import com.fdifrison.statemachine.StateMachineService;
+import com.fdifrison.statemachine.event.ApproveEvent;
+import com.fdifrison.statemachine.event.RejectEvent;
+import com.fdifrison.statemachine.event.SubmitEvent;
+import com.fdifrison.statemachine.state.State;
 import com.fdifrison.statemachine.state.StateResolver;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 
 import java.util.UUID;
 
+@SpringBootApplication
 public class Main {
     public static void main(String[] args) {
-
-        var eventLogRepository = new EventLogRepository();
-        var jwtService = new JwtService();
-        var eventLogService = new EventLogService(jwtService, eventLogRepository);
-        var guardService = new JwtService();
-        var stateService = new StateMachineService(eventLogService, guardService);
-        var controller = new StateController(stateService);
-
-        System.out.println("\n---------------------------------\n");
-
-        var submit = new Request.SubmitRequest(
-                UUID.randomUUID(),
-                new Payload.Document("MyDoc", new byte[1000]),
-                StateResolver.Status.IN_PROGRESS);
-
-        var submitResponse = (Request.SubmitRequest) controller.submit(submit);
-
-        System.out.println("\n---------------------------------\n");
-
-        var approve = new Request.ApproveRequest(
-                submitResponse.id(),
-                new Payload.ApproveCause("G.F"),
-                submitResponse.status());
-
-        Request.ApproveRequest approvedResponse;
-
-        try {
-            approvedResponse = (Request.ApproveRequest) controller.approve(approve);
-        } catch (Exception e) {
-            System.out.println("\nEXCEPTION  ----------------------");
-            System.out.println(e.getMessage());
-            System.out.println("EXCEPTION  ----------------------\n");
-            guardService.setUserRole(JwtService.Roles.ADMIN);
-            approvedResponse = (Request.ApproveRequest) controller.approve(approve);
-        }
-
-        System.out.println("\n---------------------------------\n");
-
-
-        var reject = new Request.RejectRequest(
-                approvedResponse.id(),
-                new Payload.RejectionCause("C.N", "Rejected because you like python"),
-                StateResolver.Status.IN_REVIEW);
-
-        var rejectResponse = controller.reject(reject);
-
-        System.out.println("\n---------------------------------\n");
-
+        SpringApplication.run(Main.class, args);
     }
 
+    @Bean
+    CommandLineRunner runner (StateMachineService service, JwtService jwtService) {
+        return args -> {
+            var submit = new Request.SubmitRequest(
+                    UUID.randomUUID(),
+                    new Payload.Document("MyDoc", new byte[1000]));
+            service.handleEvent(new SubmitEvent(new State.InProgress(StateResolver.Status.IN_PROGRESS), submit));
+
+            System.out.println("\n---------------------------------\n");
+
+            var approve = new Request.ApproveRequest(
+                    UUID.randomUUID(),
+                    new Payload.ApproveCause("G.F"));
+
+
+            try {
+                service.handleEvent( new ApproveEvent(new State.InReview(StateResolver.Status.IN_REVIEW), approve));
+            } catch (Exception e) {
+                System.out.println("\nEXCEPTION  ----------------------");
+                System.out.println(e.getMessage());
+                System.out.println("EXCEPTION  ----------------------\n");
+                jwtService.setUserRole(JwtService.Roles.ADMIN);
+                service.handleEvent( new ApproveEvent(new State.InReview(StateResolver.Status.IN_REVIEW), approve));
+            }
+
+            System.out.println("\n---------------------------------\n");
+
+
+            var reject = new Request.RejectRequest(
+                    UUID.randomUUID(),
+                    new Payload.RejectionCause("C.N", "Rejected because you like python"));
+
+            service.handleEvent( new RejectEvent(new State.InReview(StateResolver.Status.IN_REVIEW), reject));
+
+            System.out.println("\n---------------------------------\n");
+
+        };
+    }
 
 }

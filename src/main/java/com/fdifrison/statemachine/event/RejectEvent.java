@@ -28,7 +28,7 @@ public record RejectEvent(State from, State.Rejected to, Request.RejectRequest r
         System.out.println("Find entity by id: " + request.id());
         System.out.println(request);
         System.out.println("Updating entity state to " + this.to);
-        var updated = new Request.RejectRequest(request.id(), request.payload(), StateResolver.resolve(this.to()));
+        var updated = new Request.RejectRequest(request.id(), request.payload());
         System.out.println(updated);
         return updated;
     }

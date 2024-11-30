@@ -8,7 +8,9 @@ import com.fdifrison.statemachine.event.RejectEvent;
 import com.fdifrison.statemachine.event.SubmitEvent;
 import com.fdifrison.repository.EventLogRepository;
 import com.fdifrison.statemachine.state.State;
+import org.springframework.stereotype.Service;
 
+@Service
 public class EventLogService {
 
     private final JwtService jwtService;

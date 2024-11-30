@@ -31,7 +31,7 @@ public record SubmitEvent(State from, State.InReview to, Request.SubmitRequest r
         System.out.println("Find entity by id: " + request.id());
         System.out.println(request);
         System.out.println("Updating entity state to " + this.to);
-        var updated = new Request.SubmitRequest(request.id(), request.payload(), StateResolver.resolve(this.to()));
+        var updated = new Request.SubmitRequest(request.id(), request.payload());
         System.out.println(updated);
         return updated;
     }
